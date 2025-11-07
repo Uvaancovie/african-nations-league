@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Header } from "@/components/Header";
 import { TournamentBracket } from "@/components/TournamentBracket";
+import LiveSimulationModal from "@/components/LiveSimulationModal";
 import { Match, Team, Tournament } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 
@@ -12,6 +13,7 @@ export default function TournamentPage() {
     const [teams, setTeams] = useState<Map<string, Team>>(new Map());
     const [loading, setLoading] = useState(true);
     const [simulating, setSimulating] = useState(false);
+    const [showLiveModal, setShowLiveModal] = useState(false);
     const [message, setMessage] = useState('');
 
     useEffect(() => {
@@ -107,9 +109,16 @@ export default function TournamentPage() {
                 {tournament && (
                     <div className="flex justify-center gap-4 mb-8">
                         <Button 
+                            onClick={() => setShowLiveModal(true)}
+                            disabled={simulating || tournament.status === 'completed'}
+                            className="bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600"
+                        >
+                            🔴 Live Simulation
+                        </Button>
+                        <Button 
                             onClick={handleSimulateRound}
                             disabled={simulating || tournament.status === 'completed'}
-                            className="bg-gradient-to-r from-yellow-500 to-orange-500"
+                            className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600"
                         >
                             {simulating ? 'Simulating...' : `Simulate ${tournament.stage ? tournament.stage.replace('_', ' ').toUpperCase() : 'ROUND'}`}
                         </Button>
@@ -139,6 +148,18 @@ export default function TournamentPage() {
                     </div>
                 )}
             </main>
+            
+            {/* Live Simulation Modal */}
+            {tournament && tournament._id && (
+                <LiveSimulationModal
+                    isOpen={showLiveModal}
+                    onClose={() => {
+                        setShowLiveModal(false);
+                        fetchTournamentData(); // Refresh data after simulation
+                    }}
+                    tournamentId={tournament._id}
+                />
+            )}
         </div>
     );
 }
