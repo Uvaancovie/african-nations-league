@@ -8,7 +8,6 @@ export function Header() {
         <Link href="/" className="flex items-center gap-2">
             <span className="text-2xl">🏆</span>
             <span className="font-bold text-lg">African Nations League</span>
-            <span className="font-bold text-lg">African Nations League</span>
         </Link>
         <nav className="flex items-center gap-2 sm:gap-4">
           <Button variant="ghost" asChild>
@@ -16,6 +15,9 @@ export function Header() {
           </Button>
           <Button variant="ghost" asChild>
             <Link href="/leaderboard">Leaderboard</Link>
+          </Button>
+          <Button variant="ghost" asChild>
+            <Link href="/goal-scorers">⚽ Top Scorers</Link>
           </Button>
           <Button asChild>
             <Link href="/register-team">Register Team</Link>
