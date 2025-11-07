@@ -4,7 +4,7 @@
 Write-Host "Starting installation..." -ForegroundColor Green
 Write-Host ""
 
-# Check if node_modules exists and has locks
+# Check if node_modules exists and remove it
 if (Test-Path "node_modules") {
     Write-Host "Cleaning up node_modules..." -ForegroundColor Yellow
     Remove-Item -Recurse -Force node_modules -ErrorAction SilentlyContinue
