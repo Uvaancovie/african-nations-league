@@ -60,7 +60,7 @@ export default function HomePage() {
       </main>
 
       <footer className="text-center py-6 text-gray-500 border-t border-gray-800">
-          <p>&copy; {new Date().getFullYear()} African Nations League Simulator. An MVP by Way2Fly Digital.</p>
+          <p>&copy; {new Date().getFullYear()} African Nations League Simulator. Dane Govender</p>
       </footer>
     </div>
   );
