@@ -1,0 +1,83 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper function to check if user has a role
+    function hasRole(role) {
+      return request.auth != null && 
+             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.roles.hasAny([role]);
+    }
+    
+    // Helper function to check if user is admin
+    function isAdmin() {
+      return hasRole('admin');
+    }
+    
+    // Helper function to check if user is rep
+    function isRep() {
+      return hasRole('rep');
+    }
+    
+    // Users collection - for role management
+    match /users/{userId} {
+      allow read: if request.auth != null;
+      allow write: if isAdmin();
+    }
+    
+    // Federations - public read, rep can create/edit own
+    match /federations/{federationId} {
+      allow read: if true;
+      allow create: if isRep();
+      allow update: if isRep() && resource.data.repUserId == request.auth.uid;
+      allow delete: if isAdmin();
+    }
+    
+    // Teams - public read, rep can manage own teams
+    match /teams/{teamId} {
+      allow read: if true;
+      allow create: if isRep();
+      allow update: if isRep() && resource.data.repUserId == request.auth.uid;
+      allow delete: if isAdmin();
+    }
+    
+    // Players - public read, rep can manage own team's players
+    match /players/{playerId} {
+      allow read: if true;
+      allow create: if isRep();
+      allow update: if isRep() && 
+                     get(/databases/$(database)/documents/teams/$(resource.data.teamId)).data.repUserId == request.auth.uid;
+      allow delete: if isAdmin();
+    }
+    
+    // Tournaments - public read, admin write
+    match /tournaments/{tournamentId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    
+    // Matches - public read, admin write
+    match /matches/{matchId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    
+    // Leaderboards - public read, admin write
+    match /leaderboards/{leaderboardId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    
+    // Tournament Archives - public read, admin create
+    match /tournamentArchives/{archiveId} {
+      allow read: if true;
+      allow create: if isAdmin();
+      allow update, delete: if false; // Archives are immutable
+    }
+    
+    // Audit logs - admin only
+    match /audit/{auditId} {
+      allow read: if isAdmin();
+      allow write: if isAdmin();
+    }
+  }
+}

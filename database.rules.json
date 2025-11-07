@@ -1,0 +1,58 @@
+{
+  "rules": {
+    "users": {
+      "$uid": {
+        ".read": "auth != null",
+        ".write": "auth != null && root.child('users').child(auth.uid).child('roles').val() == 'admin'"
+      }
+    },
+    "federations": {
+      ".read": "true",
+      "$federationId": {
+        ".write": "auth != null && (root.child('users').child(auth.uid).child('roles').val() == 'admin' || data.child('repUserId').val() == auth.uid)"
+      }
+    },
+    "teams": {
+      ".read": "true",
+      "$teamId": {
+        ".write": "auth != null && (root.child('users').child(auth.uid).child('roles').val() == 'admin' || data.child('repUserId').val() == auth.uid)"
+      }
+    },
+    "players": {
+      ".read": "true",
+      "$playerId": {
+        ".write": "auth != null"
+      }
+    },
+    "tournaments": {
+      ".read": "true",
+      "$tournamentId": {
+        ".write": "auth != null && root.child('users').child(auth.uid).child('roles').val() == 'admin'"
+      }
+    },
+    "matches": {
+      ".read": "true",
+      "$matchId": {
+        ".write": "auth != null && root.child('users').child(auth.uid).child('roles').val() == 'admin'"
+      }
+    },
+    "leaderboards": {
+      ".read": "true",
+      "$leaderboardId": {
+        ".write": "auth != null && root.child('users').child(auth.uid).child('roles').val() == 'admin'"
+      }
+    },
+    "tournamentArchives": {
+      ".read": "true",
+      "$archiveId": {
+        ".write": "auth != null && root.child('users').child(auth.uid).child('roles').val() == 'admin' && !data.exists()"
+      }
+    },
+    "audit": {
+      ".read": "auth != null && root.child('users').child(auth.uid).child('roles').val() == 'admin'",
+      "$auditId": {
+        ".write": "auth != null && root.child('users').child(auth.uid).child('roles').val() == 'admin'"
+      }
+    }
+  }
+}

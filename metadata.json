@@ -1,0 +1,5 @@
+{
+  "name": "African Nations League Simulator",
+  "description": "A web app to simulate a knockout-style African Nations League tournament, with admin controls, public views, and AI-powered match generation.",
+  "requestFramePermissions": []
+}
