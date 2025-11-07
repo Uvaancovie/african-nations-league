@@ -43,7 +43,13 @@ export default function GoalScorersPage() {
     const fetchGoalScorers = async () => {
         try {
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/goal-scorers`);
+            if (!response.ok) {
+                console.error('API response not ok:', response.status, response.statusText);
+                setLoading(false);
+                return;
+            }
             const data = await response.json();
+            console.log('Goal scorers fetched:', data);
             setGoalScorers(data);
             setLoading(false);
         } catch (error) {
@@ -139,13 +145,33 @@ export default function GoalScorersPage() {
                     
                     <CardContent>
                         {loading ? (
-                            <p className="text-center text-gray-400 py-8">Loading goal scorers...</p>
+                            <div className="text-center py-12">
+                                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-yellow-400 mx-auto mb-4"></div>
+                                <p className="text-gray-400">Loading goal scorers...</p>
+                            </div>
                         ) : filteredScorers.length === 0 ? (
-                            <p className="text-center text-gray-400 py-8">
-                                {searchTerm || teamFilter !== 'all' 
-                                    ? 'No goal scorers found matching your filters' 
-                                    : 'No goals scored yet'}
-                            </p>
+                            <div className="text-center py-12">
+                                {searchTerm || teamFilter !== 'all' ? (
+                                    <>
+                                        <p className="text-2xl mb-2">🔍</p>
+                                        <p className="text-gray-400 text-lg mb-2">No goal scorers found</p>
+                                        <p className="text-gray-500 text-sm">Try adjusting your search or filters</p>
+                                    </>
+                                ) : goalScorers.length === 0 ? (
+                                    <>
+                                        <p className="text-4xl mb-4">⚽</p>
+                                        <p className="text-gray-400 text-lg mb-2">No goals scored yet!</p>
+                                        <p className="text-gray-500 text-sm">Start the tournament and play matches to see goal scorers here.</p>
+                                        <div className="mt-6">
+                                            <a href="/admin" className="text-blue-400 hover:text-blue-300 underline">
+                                                Go to Admin Panel →
+                                            </a>
+                                        </div>
+                                    </>
+                                ) : (
+                                    <p className="text-gray-400">No results found</p>
+                                )}
+                            </div>
                         ) : (
                             <>
                                 <div className="mb-4 text-sm text-gray-400">
